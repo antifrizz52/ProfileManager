@@ -1,4 +1,4 @@
 language: csharp
 solution: UserStore.sln
 instal:
-	- nuget restore UserStore.sln
+-nuget restore UserStore.sln
