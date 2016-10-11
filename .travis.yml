@@ -7,8 +7,8 @@ env:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
  - secure: "PxdqF7MXCBPPtFEGXzIHawF7zpYK8p+OrDMr2DGxQDOFedLScgR2WV41/OhXHocJssdUerutWioaw4XjabXNbS3OTO7v0qwKNLFyJsp2mnPydywVkMaWaDObODmfwb+QNUwgIosXRpUD67AQGTsri9TtNly6yNriuga4KB/X66CBx0kZ2zyYtwBv4mNu4ybwuIzFi3tMgHewNf/ewEPQtYYRD5AgNpSX4V03BS9QoG8YlegANlVe0WKC7oJIrLLYheKfnYUzAg4slZ/CZU38wsPFud9FUtnuRGz2lBbqfkoKuXYfjwznhshZukOVwtu6b5v97OlpKfVA0TX6WWovtdbLR1eXI4Oj/KHvQPhZSxlXoQpilCGaE6OkpsPful9dlZVTbNuGEVkWf/triJFGXslxzN0GKpERFvnzqG6Vf4ZaDiT1+yeRganTk0pe1iOTRILbpP8MPOlANY3RWsdtQfGa4hzNIsArAx07d1bbL3wnhrHIyZHOqkLV1jlCo3r6GXy0/BVgfDrxCNApWP3CuyNuN+1pm7aW4UeiWEFOfnOWBLkFbebMODRUzs5z3Wffmjtrul2hBR8jE+Rxl7S8aSZZmkCgZbFaMk82BeCdZJojgd3tKE7g63XSoXXoYQpyag/Wf7hDSX+dHKcTxkdSKYBvS1Uaaisz9wHp71zz7Dg="
-#before_install:
-# - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+before_install:
+ - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 addons:
  coverity_scan:
   project:
@@ -17,4 +17,4 @@ addons:
   notification_email: egor.nukrev@gmail.com
   build_command_prepend: "msbuild /t:Clean"
   build_command: "msbuild /t:Rebuild"
-  branch_pattern: develop
+  branch_pattern: coverity_scan
