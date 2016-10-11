@@ -1,0 +1,61 @@
+﻿@model UserStore.WebLayer.Models.DepartmentModel
+
+@{
+    ViewBag.Title = "Детали";
+}
+
+<h2>Информация о "@Html.ValueFor(model => model.Name)"</h2>
+
+<hr />
+
+<h4>Список сотрудников</h4>
+
+@if (Model.Users.Count == 0)
+{
+    <div class="text-center">Нет данных</div>
+}
+else
+{
+    <table class="table table-hover table-condensed table-bordered table-striped">
+        <tr>
+            <th class="text-center">
+                №
+            </th>
+            <th class="text-center">
+                Имя
+            </th>
+            <th class="text-center">
+                Email
+            </th>
+            <th class="text-center">
+                Телефон
+            </th>
+            <th class="text-center">
+                Адрес
+            </th>
+        </tr>
+
+        @foreach (var item in Model.Users)
+        {
+            <tr>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td class="text-right">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td class="text-right">
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td class="text-right">
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td class="text-right">
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+

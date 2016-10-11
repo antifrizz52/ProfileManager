@@ -1,0 +1,42 @@
+﻿@model IEnumerable<UserStore.WebLayer.Models.DepartmentModel>
+@{
+    ViewBag.Title = "Отделы";
+}
+
+<h2>Список отделов</h2>
+<hr />
+<table class="table table-hover table-condensed table-bordered table-striped">
+    <tr>
+        <th class="text-center col-md-1">
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+        <th class="text-center col-md-7">
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th class="text-center col-md-4">
+            Действия
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td class="text-right">
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td class="text-center">
+                @Html.ActionLink("Детали", "Details", new {id = item.Id})
+                |
+                @Html.ActionLink("Редактировать", "Edit", new {id = item.Id})
+                |
+                @Html.ActionLink("Удалить", "Index")
+            </td>
+        </tr>
+    }
+</table>
+
+
+@Html.ActionLink("Создать новый отдел", "Create", "Department", new { @class = "btn btn-primary" })
