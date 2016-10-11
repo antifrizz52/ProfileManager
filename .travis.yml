@@ -10,11 +10,11 @@ env:
 #before_install:
 # - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 addons:
-  coverity_scan:
-	project:
-	  name: "antifrizz52/ProfileManager"
-	  description: "Build submitted via Travis CI"
-	notification_email: egor.nukrev@gmail.com
-	build_command_prepend: "msbuild /t:Clean"
-	build_command: "msbuild /t:Rebuild"
-	branch_pattern: develop
+ coverity_scan:
+  project:
+   name: "antifrizz52/ProfileManager"
+   description: "Build submitted via Travis CI"
+  notification_email: egor.nukrev@gmail.com
+  build_command_prepend: "msbuild /t:Clean"
+  build_command: "msbuild /t:Rebuild"
+  branch_pattern: develop
