@@ -12,8 +12,8 @@ before_install:
 addons:
  coverity_scan:
   project:
-   name: "antifrizz52/ProfileManager"
-   description: "Build submitted via Travis CI"
+    name: "antifrizz52/ProfileManager"
+    description: "Build submitted via Travis CI"
    notification_email: egor.nukrev@gmail.com
    build_command_prepend: "msbuild /t:Clean"
    build_command:   "msbuild /t:Rebuild"
