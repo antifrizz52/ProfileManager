@@ -10,6 +10,7 @@ namespace UserStore.BusinessLayer.Util
         {
             builder.RegisterType<UserService>().As<IUserService>().InstancePerRequest();
             builder.RegisterType<DepartmentService>().As<IDepartmentService>().InstancePerRequest();
+            builder.RegisterType<AuthService>().As<IAuthService>().InstancePerRequest();
 
             base.Load(builder);
         }

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
 using AutoMapper;
 using UserStore.BusinessLayer.DTO;
 using UserStore.BusinessLayer.Interfaces;
-using UserStore.BusinessLayer.Services;
 using UserStore.WebLayer.Models;
 
 namespace UserStore.WebLayer.Controllers

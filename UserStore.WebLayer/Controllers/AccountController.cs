@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using AutoMapper;
 using Microsoft.Owin.Security;
 using UserStore.BusinessLayer.DTO;
-using UserStore.BusinessLayer.Infrastructure;
 using UserStore.BusinessLayer.Interfaces;
 using UserStore.WebLayer.Models;
 
@@ -14,15 +13,17 @@ namespace UserStore.WebLayer.Controllers
     public class AccountController : Controller
     {
         private IUserService userService;
+        private IAuthService authService;
 
         private IAuthenticationManager AuthenticationManager
         {
             get { return HttpContext.GetOwinContext().Authentication; }
         }
 
-        public AccountController(IUserService serv)
+        public AccountController(IUserService userSrv, IAuthService authSrv)
         {
-            userService = serv;
+            userService = userSrv;
+            authService = authSrv;
         }
 
         public ActionResult Login()
@@ -39,27 +40,26 @@ namespace UserStore.WebLayer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(model);
+
+            Mapper.Initialize(cfg => cfg.CreateMap<LoginModel, AppUserDTO>());
+            var user = Mapper.Map<LoginModel, AppUserDTO>(model);
+
+            ClaimsIdentity claim = await authService.Authenticate(user);
+
+            if (claim == null)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<LoginModel, UserDTO>());
-                var user = Mapper.Map<LoginModel, UserDTO>(model);
-
-                ClaimsIdentity claim = await userService.Authenticate(user);
-
-                if (claim == null)
+                ModelState.AddModelError("", "Неверный логин или пароль!");
+            }
+            else
+            {
+                AuthenticationManager.SignOut();
+                AuthenticationManager.SignIn(new AuthenticationProperties
                 {
-                    ModelState.AddModelError("", "Неверный логин или пароль!");
-                }
-                else
-                {
-                    AuthenticationManager.SignOut();
-                    AuthenticationManager.SignIn(new AuthenticationProperties
-                    {
-                        IsPersistent = true
-                    }, claim);
+                    IsPersistent = true
+                }, claim);
 
-                    return RedirectToAction("Index", "Home");
-                }
+                return RedirectToAction("Index", "Home");
             }
 
             return View(model);
@@ -69,21 +69,36 @@ namespace UserStore.WebLayer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(model);
+
+            Mapper.Initialize(cfg =>
             {
-                Mapper.Initialize(cfg => cfg
-                        .CreateMap<RegisterModel, UserDTO>()
-                        .ForMember("Role", opt => opt.UseValue("User")));
+                cfg
+                    .CreateMap<RegisterModel, AppUserDTO>()
+                    .ForMember("Role", opt => opt.UseValue(Role.User))
+                    .ForMember("UserName", opt => opt.MapFrom("Email"));
 
-                var user = Mapper.Map<RegisterModel, UserDTO>(model);
+                cfg.CreateMap<RegisterModel, UserDTO>();
+            });
 
-                OperationDetails operationDetails = await userService.Create(user);
+            var appUserDto = Mapper.Map<RegisterModel, AppUserDTO>(model);
+            var userDto = Mapper.Map<RegisterModel, UserDTO>(model);
+
+            var operationDetails = await authService.Create(appUserDto);
+
+            if (operationDetails.Succeeded)
+            {
+                operationDetails = await userService.CreateProfile(userDto);
 
                 if (operationDetails.Succeeded)
+                {
                     return View("SuccessRegister");
-                else
-                    ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+                }
+                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
             }
+            else
+                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+
             return View(model);
         }
 
