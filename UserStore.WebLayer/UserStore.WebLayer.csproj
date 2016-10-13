@@ -196,6 +196,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DepartmentModel.cs" />
+    <Compile Include="Models\DetailedUserProfileModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\UserProfileModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />

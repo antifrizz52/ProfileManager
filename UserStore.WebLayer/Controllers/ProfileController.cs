@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using AutoMapper;
 using UserStore.BusinessLayer.DTO;
@@ -13,21 +11,51 @@ namespace UserStore.WebLayer.Controllers
     public class ProfileController : Controller
     {
         private IUserService userService;
+        private IDepartmentService departmentService;
 
-        public ProfileController(IUserService service)
+        public ProfileController(IUserService userServ, IDepartmentService depServ)
         {
-            userService = service;
+            userService = userServ;
+            departmentService = depServ;
         }
 
-        // GET: Profile
         public ActionResult Index()
         {
             var profilesDto = userService.GetUsers();
 
-            Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfileModel>());
-            var profiles = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(profilesDto);
+            var model = new List<DetailedUserProfileModel>();
 
-            return View(profiles);
+            foreach (var item in profilesDto)
+            {
+                var detailedModel = new DetailedUserProfileModel();
+
+                var profile = new UserProfileModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Email = item.Email,
+                    Phone = item.Phone,
+                    Address = item.Address,
+                    DepartmentId = item.DepartmentId
+                };
+
+                detailedModel.UserProfile = profile;
+
+                if (item.DepartmentId != null)
+                {
+                    var department = new DepartmentModel
+                    {
+                        Id = departmentService.GetDepartment(item.DepartmentId).Id,
+                        Name = departmentService.GetDepartment(item.DepartmentId).Name
+                    };
+
+                    detailedModel.Department = department;
+                }
+
+                model.Add(detailedModel);
+            }
+
+            return View(model);
         }
     }
 }

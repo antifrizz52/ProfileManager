@@ -1,4 +1,4 @@
-﻿@model IEnumerable<UserStore.WebLayer.Models.UserProfileModel>
+﻿@model IEnumerable<UserStore.WebLayer.Models.DetailedUserProfileModel>
 
 @{
     ViewBag.Title = "Пользователи";
@@ -10,19 +10,19 @@
 <table class="table table-hover table-condensed table-bordered table-striped">
     <tr>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Id)
+            @Html.DisplayNameFor(model => model.UserProfile.Id)
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.UserProfile.Name)
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Email)
+            @Html.DisplayNameFor(model => model.UserProfile.Email)
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Phone)
+            @Html.DisplayNameFor(model => model.UserProfile.Phone)
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Department)
+            @Html.DisplayNameFor(model => model.Department.Name)
         </th>
         <th class="text-center">
             Действия
@@ -33,26 +33,26 @@
     {
         <tr>
             <td class="text-center">
-                @Html.DisplayFor(modelItem => item.Id)
+                @Html.DisplayFor(modelItem => item.UserProfile.Id)
             </td>
             <td class="text-right">
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.UserProfile.Name)
             </td>
             <td class="text-right">
-                @Html.DisplayFor(modelItem => item.Email)
+                @Html.DisplayFor(modelItem => item.UserProfile.Email)
             </td>
             <td class="text-right">
-                @Html.DisplayFor(modelItem => item.Phone)
+                @Html.DisplayFor(modelItem => item.UserProfile.Phone)
             </td>
             <td class="text-right">
-                @Html.DisplayFor(modelItem => item.Department)
+                @Html.DisplayFor(modelItem => item.Department.Name)
             </td>
             <td class="text-center">
-                @Html.ActionLink("Детали", "Details", new { id = item.Id })
+                @Html.ActionLink("Детали", "Details", new { id = item.UserProfile.Id })
                 |
-                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id })
+                @Html.ActionLink("Редактировать", "Edit", new { id = item.UserProfile.Id })
                 |
-                @Html.ActionLink("Удалить", "Index", new { id = item.Id })
+                @Html.ActionLink("Удалить", "Index", new { id = item.UserProfile.Id })
             </td>
         </tr>
     }
