@@ -1,0 +1,34 @@
+﻿@model UserStore.WebLayer.Models.DetailedUserProfileModel
+
+@{
+    ViewBag.Title = "Профиль пользователя";
+}
+
+<h2>Профиль пользователя</h2>
+
+<hr />
+
+<div class="media">
+    <div class="media-left">
+        <img class="media-object" src="" alt="" width="128" height="128" />
+    </div>
+
+    <div class="media-body">
+        <strong>@Html.LabelFor(model => model.UserProfile.Name)</strong>
+        @Html.DisplayFor(model => model.UserProfile.Name) <br />
+
+        <strong>@Html.LabelFor(model => model.Department.Name)</strong>
+        @Html.DisplayFor(model => model.Department.Name) <br />
+
+        <strong>@Html.LabelFor(model => model.UserProfile.Email)</strong>
+        <a href="mailto:@Html.DisplayFor(model => model.UserProfile.Email)">
+            @Html.DisplayFor(model => model.UserProfile.Email)
+        </a> <br />
+
+        <strong>@Html.LabelFor(model => model.UserProfile.Phone)</strong>
+        @Html.DisplayFor(model => model.UserProfile.Phone) <br />
+
+        <strong>@Html.LabelFor(model => model.UserProfile.Address)</strong>
+        @Html.DisplayFor(model => model.UserProfile.Address)
+    </div>
+</div>

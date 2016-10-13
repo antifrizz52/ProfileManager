@@ -57,5 +57,31 @@ namespace UserStore.WebLayer.Controllers
 
             return View(model);
         }
+
+        public ActionResult Details(int? id)
+        {
+            var departmentDto = new DepartmentDTO();
+
+            var userDto = userService.GetUser(id);
+
+            if (userDto.DepartmentId != null)
+            {
+                departmentDto = departmentService.GetDepartment(userDto.DepartmentId);
+            }
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<UserDTO, UserProfileModel>();
+                cfg.CreateMap<DepartmentDTO, DepartmentModel>();
+            });
+
+            var detailedInfo = new DetailedUserProfileModel()
+            {
+                UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto),
+                Department = Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto)
+            };
+
+            return View(detailedInfo);
+        }
     }
 }
