@@ -25,33 +25,26 @@ namespace UserStore.WebLayer.Controllers
 
             var model = new List<DetailedUserProfileModel>();
 
-            foreach (var item in profilesDto)
+            foreach (var userDto in profilesDto)
             {
                 var detailedModel = new DetailedUserProfileModel();
 
-                var profile = new UserProfileModel
+                var departmentDto = userDto.DepartmentId == null 
+                    ? null 
+                    : departmentService.GetDepartment(userDto.DepartmentId);
+
+                Mapper.Initialize(cfg =>
                 {
-                    Id = item.Id,
-                    Name = item.Name,
-                    Email = item.Email,
-                    Phone = item.Phone,
-                    Address = item.Address,
-                    DepartmentId = item.DepartmentId
-                };
-
-                detailedModel.UserProfile = profile;
-
-                if (item.DepartmentId != null)
-                {
-                    var department = new DepartmentModel
-                    {
-                        Id = departmentService.GetDepartment(item.DepartmentId).Id,
-                        Name = departmentService.GetDepartment(item.DepartmentId).Name
-                    };
-
-                    detailedModel.Department = department;
-                }
-
+                    cfg.CreateMap<UserDTO, UserProfileModel>();
+                    cfg.CreateMap<DepartmentDTO, DepartmentModel>();
+                });
+                
+                detailedModel.UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto);
+                
+                detailedModel.Department = userDto.DepartmentId == null
+                    ? null
+                    : Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto);
+                
                 model.Add(detailedModel);
             }
 
