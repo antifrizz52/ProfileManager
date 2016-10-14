@@ -1,4 +1,4 @@
-# ProfileManager - Open Source
+# ProfileManager.NET - Open Source profile manager for business
 
 [![Build Status](https://travis-ci.org/antifrizz52/ProfileManager.svg?branch=develop)](https://travis-ci.org/antifrizz52/ProfileManager)
 [![Build status](https://ci.appveyor.com/api/projects/status/s6319tkp7qp8ibtk/branch/master?svg=true)](https://ci.appveyor.com/project/antifrizz52/profilemanager/branch/master)
