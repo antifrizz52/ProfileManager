@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using UserStore.DataLayer.EF;
 using UserStore.DataLayer.Entities;
 using UserStore.DataLayer.Interfaces;
@@ -28,7 +29,7 @@ namespace UserStore.DataLayer.Repositories
 
         public IEnumerable<UserProfile> Find(Func<UserProfile, bool> predicate)
         {
-            throw new NotImplementedException();
+            return db.UserProfiles.Where(predicate);
         }
 
         public void Create(UserProfile user)
@@ -38,7 +39,17 @@ namespace UserStore.DataLayer.Repositories
 
         public void Update(UserProfile user)
         {
-            db.Entry(user).State = EntityState.Modified;
+            var attachedEntity = db.UserProfiles.Find(user.Id);
+
+            if (attachedEntity != null)
+            {
+                var attachedEntry = db.Entry(attachedEntity);
+                attachedEntry.CurrentValues.SetValues(user);
+            }
+            else
+            {
+                db.Entry(user).State = EntityState.Modified;
+            }
         }
 
         public void Delete(int id)

@@ -63,6 +63,22 @@ namespace UserStore.BusinessLayer.Services
             return Mapper.Map<IEnumerable<UserProfile>, List<UserDTO>>(users.ToList());
         }
 
+        public async Task<OperationDetails> Update(UserDTO userDto)
+        {
+            var profile = Database.UserProfiles.Find(x => x.Id == userDto.Id).FirstOrDefault();
+
+            if (profile == null)
+                return new OperationDetails(false, "Профиль не найден!", "Id");
+
+            Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfile>());
+            profile = Mapper.Map<UserDTO, UserProfile>(userDto);
+
+            Database.UserProfiles.Update(profile);
+            await Database.SaveAsync();
+
+            return new OperationDetails(true, "Профиль успешно обновлен!", "");
+        }
+
         public void Dispose()
         {
             Database.Dispose();

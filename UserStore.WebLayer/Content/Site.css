@@ -11,7 +11,8 @@
 
 /* Set width on the form input elements since they're 100% wide by default */
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+select {
     max-width: 280px;
 }
 

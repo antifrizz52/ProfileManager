@@ -9,6 +9,7 @@ namespace UserStore.WebLayer.Models
 
         public string Email { get; set; }
 
+        [Required(ErrorMessage = "Введите имя сотрудника!")]
         [Display(Name = "Имя")]
         public string Name { get; set; }
 
@@ -22,8 +23,8 @@ namespace UserStore.WebLayer.Models
 
         public int? DepartmentId { get; set; }
 
-        [Display(Name = "Отдел")]
-        public string Department { get; set; }
+        //[Display(Name = "Отдел")]
+        //public string Department { get; set; }
         //public virtual DepartmentModel Department { get; set; }
     }
 }

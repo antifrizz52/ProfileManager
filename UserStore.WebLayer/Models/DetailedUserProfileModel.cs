@@ -1,4 +1,6 @@
-﻿namespace UserStore.WebLayer.Models
+﻿using System.Web.Mvc;
+
+namespace UserStore.WebLayer.Models
 {
     public class DetailedUserProfileModel
     {

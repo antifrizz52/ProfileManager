@@ -12,6 +12,7 @@ namespace UserStore.BusinessLayer.Interfaces
         Task<OperationDetails> CreateProfile(UserDTO userDto);
         UserDTO GetUser(int? id);
         IEnumerable<UserDTO> GetUsers();
+        Task<OperationDetails> Update(UserDTO userDto); 
 
         void Dispose();
     }

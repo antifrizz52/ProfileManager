@@ -32,3 +32,10 @@
         @Html.DisplayFor(model => model.UserProfile.Address)
     </div>
 </div>
+
+<hr />
+
+<div>
+    @Html.ActionLink("Назад к списку", "Index", "Profile", new { @class = "btn btn-primary btn-sm" })
+    @Html.ActionLink("Редактировать", "Edit", "Profile", new { id = Model.UserProfile.Id }, new { @class = "btn btn-primary btn-sm" })
+</div>

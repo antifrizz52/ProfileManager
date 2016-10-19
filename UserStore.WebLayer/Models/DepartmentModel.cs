@@ -11,7 +11,7 @@ namespace UserStore.WebLayer.Models
         [Required(ErrorMessage = "Введите наименование отдела!")]
         [Display(Name = "Наименование отдела")]
         public string Name { get; set; }
-
+        
         public virtual ICollection<UserProfileModel> Users { get; set; } 
     }
 }
