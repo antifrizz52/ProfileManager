@@ -14,11 +14,13 @@ namespace UserStore.WebLayer.Controllers
     {
         private IUserService userService;
         private IDepartmentService departmentService;
+        private IAuthService authService;
 
-        public ProfileController(IUserService userServ, IDepartmentService depServ)
+        public ProfileController(IUserService userServ, IDepartmentService depServ, IAuthService authServ)
         {
             userService = userServ;
             departmentService = depServ;
+            authService = authServ;
         }
 
         public ActionResult Index()
@@ -102,9 +104,9 @@ namespace UserStore.WebLayer.Controllers
                 Department = Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto)
             };
 
-            var items = GetDepartmentsList();
+            var departments = GetDepartmentsList();
 
-            ViewBag.Departments = items;
+            ViewBag.Departments = departments;
 
             return View(model);
         }
@@ -119,14 +121,62 @@ namespace UserStore.WebLayer.Controllers
             if (!ModelState.IsValid) return View(model);
 
             Mapper.Initialize(cfg => cfg.CreateMap<UserProfileModel, UserDTO>());
-            var userDto= Mapper.Map<UserProfileModel, UserDTO>(model.UserProfile);
+            var userDto = Mapper.Map<UserProfileModel, UserDTO>(model.UserProfile);
 
             OperationDetails operationDetails = await userService.Update(userDto);
 
-            if(operationDetails.Succeeded)
+            if (operationDetails.Succeeded)
                 return RedirectToAction("Index");
 
             ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+
+            return View(model);
+        }
+
+        public ActionResult Create()
+        {
+            var departments = GetDepartmentsList();
+            ViewBag.Departments = departments;
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(UserProfileModel model)
+        {
+            var departments = GetDepartmentsList();
+            ViewBag.Departments = departments;
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<UserProfileModel, AppUserDTO>()
+                    .ForMember("UserName", opt => opt.MapFrom("Email"))
+                    .ForMember("Password", opt => opt.UseValue("123456"));
+                cfg.CreateMap<UserProfileModel, UserDTO>();
+            });
+
+            var appUser = Mapper.Map<UserProfileModel, AppUserDTO>(model);
+            var userDto = Mapper.Map<UserProfileModel, UserDTO>(model);
+
+            OperationDetails operationDetails = await authService.Create(appUser);
+
+            if (operationDetails.Succeeded)
+            {
+                operationDetails = await userService.CreateProfile(userDto);
+
+                if (operationDetails.Succeeded)
+                    return RedirectToAction("Index");
+
+                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+            }
+            else
+            {
+                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+            }
 
             return View(model);
         }
@@ -146,6 +196,6 @@ namespace UserStore.WebLayer.Controllers
             }
 
             return items;
-        } 
+        }
     }
 }

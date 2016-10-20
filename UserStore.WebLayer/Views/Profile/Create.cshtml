@@ -1,0 +1,89 @@
+﻿@model UserStore.WebLayer.Models.UserProfileModel
+@using UserStore.WebLayer.Models;
+
+@{
+    ViewBag.Title = "Профиль пользователя - Создать";
+    List<SelectListItem> departments = ViewBag.Departments;
+}
+
+<h3>Профиль пользователя - Создать</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        <div class="media">
+
+            <div class="media-left">
+                <img class="media-object" src="" alt="" width="128" height="128" />
+                <br />
+                <button type="button" class="btn btn-default btn-xs btn-block">Browse...</button>
+            </div>
+
+            <div class="media-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.Name, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
+                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.Email, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
+                        @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.Phone, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
+                        @Html.TextBoxFor(model => model.Phone, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.Address, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
+                        @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.DepartmentId, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
+                        @Html.DropDownListFor(model => model.DepartmentId, departments, "Нет отдела", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.Role, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
+                        @Html.DropDownListFor(model => model.Role,
+                           Enum.GetNames(typeof(Role)).Select(e => new SelectListItem { Text = e }),
+                           new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                По умолчанию будет установлен пароль <strong>"123456"</strong>
+            </div>
+        </div>
+        <hr />
+        <div>
+            @Html.ActionLink("Назад к списку", "Index", "Profile", new { @class = "btn btn-primary btn-sm" })
+            <input type="submit" value="Сохранить" class="btn btn-primary btn-sm" />
+        </div>
+    </div>
+}

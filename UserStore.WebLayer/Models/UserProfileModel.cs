@@ -7,6 +7,8 @@ namespace UserStore.WebLayer.Models
         [Display(Name = "№")]
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Введите email адрес!")]
+        [EmailAddress(ErrorMessage = "Некорректный формат email адреса!")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Введите имя сотрудника!")]
@@ -19,12 +21,20 @@ namespace UserStore.WebLayer.Models
         [Display(Name = "Телефон")]
         public string Phone { get; set; }
 
-        public string Role { get; set; }
 
+        [Display(Name = "Системная роль")]
+        public Role Role { get; set; }
+
+        [Display(Name = "Наименование отдела")]
         public int? DepartmentId { get; set; }
+    }
 
-        //[Display(Name = "Отдел")]
-        //public string Department { get; set; }
-        //public virtual DepartmentModel Department { get; set; }
+    public enum Role
+    {
+        [Display(Name = "Пользователь")]
+        User,
+
+        [Display(Name = "Администратор")]
+        Admin
     }
 }

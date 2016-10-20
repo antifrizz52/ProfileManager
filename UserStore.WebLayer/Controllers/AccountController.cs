@@ -75,7 +75,7 @@ namespace UserStore.WebLayer.Controllers
             {
                 cfg
                     .CreateMap<RegisterModel, AppUserDTO>()
-                    .ForMember("Role", opt => opt.UseValue(Role.User))
+                    .ForMember("Role", opt => opt.UseValue(BusinessLayer.DTO.Role.User))
                     .ForMember("UserName", opt => opt.MapFrom("Email"));
 
                 cfg.CreateMap<RegisterModel, UserDTO>();
