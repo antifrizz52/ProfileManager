@@ -1,10 +1,21 @@
 ﻿@model UserStore.WebLayer.Models.DepartmentModel
 
 @{
-    ViewBag.Title = "Детали";
+    ViewBag.Title = "Отдел - Детали";
 }
 
-<h2>Информация о "@Html.ValueFor(model => model.Name)"</h2>
+<h3>Отдел - Детали</h3>
+<hr />
+
+<strong>@Html.LabelFor(model => model.Name)</strong>
+@Html.DisplayFor(model => model.Name) <br />
+
+<strong>@Html.LabelFor(model => model.Id)</strong>
+@Html.DisplayFor(model => model.Name) <br />
+
+<strong>Количество сотрудников</strong>
+@Html.DisplayFor(model => model.Users.Count) <br />
+
 
 <hr />
 
@@ -56,6 +67,11 @@ else
             </tr>
         }
     </table>
+    <hr/>
+    <div>
+        @Html.ActionLink("Назад к списку", "Index", "Department", new { @class = "btn btn-primary btn-sm" })
+        @Html.ActionLink("Редактировать", "Edit", "Department", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm" })
+    </div>
 }
 
 

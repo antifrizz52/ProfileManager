@@ -1,10 +1,10 @@
 ﻿@model UserStore.WebLayer.Models.DepartmentModel
 
 @{
-    ViewBag.Title = "Редактирование";
+    ViewBag.Title = "Отдел - Редактировать";
 }
 
-<h2>Редактирование отдела</h2>
+<h3>Отдел - Редактировать</h3>
 
 @using (Html.BeginForm())
 {
@@ -13,18 +13,26 @@
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        <div class="form-group form-group-sm">
+            @Html.LabelFor(model => model.Name, new {@class = "control-label col-sm-2"})
+            <div class="col-sm-10">
+                @Html.TextBoxFor(model => model.Name, new {@class = "form-control"})
+                @Html.ValidationMessageFor(model => model.Name, "", new {@class = "text-danger"})
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Сохранить" class="btn btn-primary" />
+        <div class="form-group form-group-sm">
+            @*@Html.LabelFor(model => model.Name, new { @class = "control-label col-sm-2" })*@
+            <label class="control-label col-sm-2">Руководитель</label>
+            <div class="col-sm-10">
+                @Html.DropDownListFor(model => model.Name, new List<SelectListItem> {new SelectListItem {Text = "Ivan"} }, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
+        </div>
+        <hr/>
+        <div>
+            @Html.ActionLink("Назад к списку", "Index", "Department", new { @class = "btn btn-primary btn-sm" })
+            <input type="submit" value="Сохранить" class="btn btn-primary btn-sm"/>
         </div>
     </div>
 }

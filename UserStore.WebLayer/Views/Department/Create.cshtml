@@ -1,10 +1,10 @@
 ﻿@model UserStore.WebLayer.Models.DepartmentModel
 
 @{
-    ViewBag.Title = "Создание нового отдела";
+    ViewBag.Title = "Отдел - Создать";
 }
 
-<h2>Создание нового отдела</h2>
+<h3>Отдел - Создать</h3>
 
 @using (Html.BeginForm())
 {
@@ -13,18 +13,18 @@
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+        <div class="form-group form-group-sm">
+            @Html.LabelFor(model => model.Name, new { @class = "control-label col-sm-2" })
+            <div class="col-sm-10">
                 @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Создать" class="btn btn-primary" />
-            </div>
+        <hr/>
+        <div>
+            @Html.ActionLink("Назад к списку", "Index", "Department", new { @class = "btn btn-primary btn-sm" })
+            <input type="submit" value="Сохранить" class="btn btn-primary btn-sm" />
         </div>
+
     </div>
 }

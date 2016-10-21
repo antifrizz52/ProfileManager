@@ -31,10 +31,7 @@ namespace UserStore.WebLayer.Models
 
     public enum Role
     {
-        [Display(Name = "Пользователь")]
         User,
-
-        [Display(Name = "Администратор")]
         Admin
     }
 }

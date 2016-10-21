@@ -26,6 +26,14 @@ namespace UserStore.WebLayer.Controllers
             Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
             var departments = Mapper.Map<IEnumerable<DepartmentDTO>, List<DepartmentModel>>(depDTO);
 
+            foreach (var department in departments)
+            {
+                var usersDto = departmentService.GetAssociatedUsers(department.Id);
+
+                Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfileModel>());
+                department.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(usersDto);
+            }
+
             return View(departments);
         }
 
@@ -47,7 +55,7 @@ namespace UserStore.WebLayer.Controllers
 
             var model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
             model.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(users);
-            
+
             return View(model);
         }
 

@@ -1,13 +1,13 @@
 ﻿@using UserStore.WebLayer.Models
 @model UserStore.WebLayer.Models.DetailedUserProfileModel
 @{
-    ViewBag.Title = "Профиль пользователя - Редактирование";
+    ViewBag.Title = "Профиль пользователя - Редактировать";
     List<SelectListItem> departments = ViewBag.Departments;
 
 
 }
 
-<h2>Профиль пользователя - Редактирование</h2>
+<h3>Профиль пользователя - Редактировать</h3>
 
 
 
@@ -30,49 +30,49 @@
             <div class="media-body">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.UserProfile.Name, new { @class = "control-label col-md-3" })
-                    <div class="col-md-9">
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.UserProfile.Name, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
                         @Html.TextBoxFor(model => model.UserProfile.Name, new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.UserProfile.Name, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.Department.Name, new { @class = "control-label col-md-3" })
-                    <div class="col-md-9">
-                        @Html.DropDownListFor(model => model.UserProfile.DepartmentId, departments, "Нет отдела", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.UserProfile.DepartmentId, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
                 <fieldset disabled>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.UserProfile.Email, new { @class = "control-label col-md-3" })
-                        <div class="col-md-9">
+                    <div class="form-group form-group-sm">
+                        @Html.LabelFor(model => model.UserProfile.Email, new { @class = "control-label col-sm-2" })
+                        <div class="col-sm-10">
                             @Html.TextBoxFor(model => model.UserProfile.Email, new { @class = "form-control " })
                         </div>
                     </div>
                 </fieldset>
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.UserProfile.Phone, new { @class = "control-label col-md-3" })
-                    <div class="col-md-9">
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.UserProfile.Phone, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
                         @Html.TextBoxFor(model => model.UserProfile.Phone, new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.UserProfile.Phone, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.UserProfile.Address, new { @class = "control-label col-md-3" })
-                    <div class="col-md-9">
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.UserProfile.Address, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
                         @Html.TextBoxFor(model => model.UserProfile.Address, new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.UserProfile.Address, "", new { @class = "text-danger" })
                     </div>
                 </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.Department.Name, new { @class = "control-label col-sm-2" })
+                    <div class="col-sm-10">
+                        @Html.DropDownListFor(model => model.UserProfile.DepartmentId, departments, "Нет отдела", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.UserProfile.DepartmentId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
             </div>
         </div>
-
+        <hr/>
         <div>
             @Html.ActionLink("Назад к списку", "Index", "Profile", new { @class = "btn btn-primary btn-sm" })
             <input type="submit" value="Сохранить" class="btn btn-primary btn-sm" />
