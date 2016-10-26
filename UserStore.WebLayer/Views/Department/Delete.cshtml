@@ -1,0 +1,18 @@
+﻿@model UserStore.WebLayer.Models.DepartmentModel
+
+@{
+    ViewBag.Title = "Отдел - Удалить";
+}
+<br />
+
+@using (Html.BeginForm())
+{
+    <div class="text-center alert alert-danger">
+        <h3>Вы уверены, что хотите удалить @Html.ValueForModel(Model.Name)?</h3>
+    </div>
+    <hr />
+    <div class="text-center">
+        @Html.ActionLink("Отмена", "Index", "Department", new { @class = "btn btn-primary btn-sm" })
+        <input type="submit" value="Удалить" class="btn btn-danger btn-sm" />
+    </div>
+}

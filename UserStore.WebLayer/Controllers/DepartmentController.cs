@@ -69,6 +69,16 @@ namespace UserStore.WebLayer.Controllers
             return View(model);
         }
 
+        public ActionResult Delete(int? id)
+        {
+            var department = departmentService.GetDepartment(id);
+
+            Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
+            var model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
+
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(DepartmentModel model)
@@ -103,6 +113,20 @@ namespace UserStore.WebLayer.Controllers
             {
                 return RedirectToAction("Index");
             }
+
+            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<ActionResult> ConfirmedDelete(DepartmentModel model)
+        {
+            OperationDetails operationDetails = await departmentService.Delete(model.Id);
+
+            if(operationDetails.Succeeded)
+                return RedirectToAction("Index");
 
             ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
 

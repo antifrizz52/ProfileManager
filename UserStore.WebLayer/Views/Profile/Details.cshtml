@@ -21,7 +21,7 @@
         @Html.DisplayFor(model => model.Department.Name) <br />
 
         <strong>@Html.LabelFor(model => model.UserProfile.Email)</strong>
-        <a href="mailto:@Html.DisplayFor(model => model.UserProfile.Email)">
+        <a href="mailto:">
             @Html.DisplayFor(model => model.UserProfile.Email)
         </a> <br />
 
@@ -29,7 +29,8 @@
         @Html.DisplayFor(model => model.UserProfile.Phone) <br />
 
         <strong>@Html.LabelFor(model => model.UserProfile.Address)</strong>
-        @Html.DisplayFor(model => model.UserProfile.Address)
+        @Html.DisplayFor(model => model.UserProfile.Address) <br/>
+
     </div>
 </div>
 

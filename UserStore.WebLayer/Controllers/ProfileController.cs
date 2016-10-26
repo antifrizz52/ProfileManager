@@ -111,6 +111,17 @@ namespace UserStore.WebLayer.Controllers
             return View(model);
         }
 
+        public ActionResult Delete(int? id)
+        {
+            var userDto = userService.GetUser(id);
+
+            Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfileModel>());
+
+            var model = Mapper.Map<UserDTO, UserProfileModel>(userDto);
+
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(DetailedUserProfileModel model)
@@ -167,6 +178,29 @@ namespace UserStore.WebLayer.Controllers
             if (operationDetails.Succeeded)
             {
                 operationDetails = await userService.CreateProfile(userDto);
+
+                if (operationDetails.Succeeded)
+                    return RedirectToAction("Index");
+
+                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+            }
+            else
+            {
+                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<ActionResult> ConfirmedDelete(UserProfileModel model)
+        {
+            OperationDetails operationDetails = await userService.Delete(model.Id);
+
+            if (operationDetails.Succeeded)
+            {
+                operationDetails = await authService.Delete(model.Id);
 
                 if (operationDetails.Succeeded)
                     return RedirectToAction("Index");

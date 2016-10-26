@@ -86,6 +86,22 @@ namespace UserStore.BusinessLayer.Services
             return new OperationDetails(true, "Отдел успешно обновлен!", "");
         }
 
+        public async Task<OperationDetails> Delete(int? id)
+        {
+            if (id == null)
+                throw new ValidationException("Не установлено id отдела!", "Id");
+
+            var department = Database.Departments.Get(id.Value);
+
+            if (department == null)
+                return new OperationDetails(false, "Отдел не найден!", "");
+
+            Database.Departments.Delete(id.Value);
+            await Database.SaveAsync();
+
+            return new OperationDetails(true, "Отдел успешно удален!", "");
+        }
+
         public void Dispose()
         {
             Database.Dispose();

@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using UserStore.DataLayer.EF;
 using UserStore.DataLayer.Interfaces;
 using UserStore.DataLayer.Repositories;
 

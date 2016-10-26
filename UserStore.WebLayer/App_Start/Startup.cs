@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Microsoft.Owin;
 using Owin;
-using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.Cookies;
 
 [assembly: OwinStartup(typeof(UserStore.WebLayer.App_Start.Startup))]

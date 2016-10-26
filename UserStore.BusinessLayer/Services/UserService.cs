@@ -79,6 +79,22 @@ namespace UserStore.BusinessLayer.Services
             return new OperationDetails(true, "Профиль успешно обновлен!", "");
         }
 
+        public async Task<OperationDetails> Delete(int? id)
+        {
+            if (id == null)
+                throw new ValidationException("Не установлено id пользователя!", "Id");
+
+            var user = Database.UserProfiles.Get(id.Value);
+
+            if (user == null)
+                throw new ValidationException("Пользователь не найден!", "");
+
+            Database.UserProfiles.Delete(id.Value);
+            await Database.SaveAsync();
+
+            return new OperationDetails(true, "Отдел успешно удален!", "");
+        }
+
         public void Dispose()
         {
             Database.Dispose();

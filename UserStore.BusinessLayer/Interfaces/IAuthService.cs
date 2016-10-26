@@ -9,6 +9,7 @@ namespace UserStore.BusinessLayer.Interfaces
     {
         Task<OperationDetails> Create(AppUserDTO appUser);
         Task<ClaimsIdentity> Authenticate(AppUserDTO appUser);
+        Task<OperationDetails> Delete(int? id); 
 
         void Dispose();
     }

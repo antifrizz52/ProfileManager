@@ -14,7 +14,7 @@ namespace UserStore.BusinessLayer.Interfaces
         IEnumerable<DepartmentDTO> GetDepartments();
         Task<OperationDetails> Update(DepartmentDTO departmentDto);
         IEnumerable<UserDTO> GetAssociatedUsers(int? id);
-
+        Task<OperationDetails> Delete(int? id);
         void Dispose();
     }
 }

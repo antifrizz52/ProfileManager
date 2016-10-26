@@ -57,6 +57,23 @@ namespace UserStore.BusinessLayer.Services
             return new OperationDetails(true, "Регистрация прошла успешно!", "");
         }
 
+        public async Task<OperationDetails> Delete(int? id)
+        {
+            if(id == null)
+                throw new ValidationException("Не установлено id отдела!", "Id");
+
+            var appUser = await Database.UserManager.FindByIdAsync(id.Value);
+
+            if (appUser == null)
+                return new OperationDetails(false, "Пользователь не найден!", "Email");
+
+            //await Database.UserManager.RemoveFromRoleAsync(appUser.Id);
+            await Database.UserManager.DeleteAsync(appUser);
+            await Database.SaveAsync();
+
+            return new OperationDetails(true, "Пользователь успешно удален!", "");
+        } 
+
         public void Dispose()
         {
             Database.Dispose();

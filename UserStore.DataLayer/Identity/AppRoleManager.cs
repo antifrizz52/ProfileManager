@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using UserStore.DataLayer.Models;
 
 namespace UserStore.DataLayer.Identity
