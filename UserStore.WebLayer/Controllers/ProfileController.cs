@@ -57,8 +57,10 @@ namespace UserStore.WebLayer.Controllers
 
         public ActionResult Details(int? id)
         {
+			//test
             var departmentDto = new DepartmentDTO();
 
+			//test
             var userDto = userService.GetUser(id);
 
             if (userDto.DepartmentId != null)
