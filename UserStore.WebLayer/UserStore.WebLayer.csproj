@@ -206,6 +206,7 @@
     <Compile Include="Models\DepartmentModel.cs" />
     <Compile Include="Models\DetailedUserProfileModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\PasswordModel.cs" />
     <Compile Include="Models\UserProfileModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -231,6 +232,8 @@
     <Content Include="Views\Profile\Create.cshtml" />
     <Content Include="Views\Department\Delete.cshtml" />
     <Content Include="Views\Profile\Delete.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\SuccessPassChange.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -36,6 +36,11 @@ namespace UserStore.WebLayer.Controllers
             return View();
         }
 
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginModel model)
@@ -98,6 +103,25 @@ namespace UserStore.WebLayer.Controllers
             }
             else
                 ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(PasswordModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var appUser = await authService.FindUserByEmail(User.Identity.Name);
+
+            var operationDetails =
+                await authService.ChangePassword(appUser.Id, model.CurrentPassword, model.NewPassword);
+
+            if (operationDetails.Succeeded)
+                return View("SuccessPassChange");
+
+            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
 
             return View(model);
         }

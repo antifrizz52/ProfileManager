@@ -9,6 +9,8 @@ namespace UserStore.BusinessLayer.Interfaces
     {
         Task<OperationDetails> Create(AppUserDTO appUser);
         Task<ClaimsIdentity> Authenticate(AppUserDTO appUser);
+        Task<AppUserDTO> FindUserByEmail(string email);
+        Task<OperationDetails> ChangePassword(int id, string oldPass, string newPass);
         Task<OperationDetails> Delete(int? id); 
 
         void Dispose();

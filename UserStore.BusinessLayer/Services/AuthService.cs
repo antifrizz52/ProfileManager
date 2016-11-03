@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -55,6 +56,30 @@ namespace UserStore.BusinessLayer.Services
             await Database.SaveAsync();
 
             return new OperationDetails(true, "Регистрация прошла успешно!", "");
+        }
+
+        public async Task<AppUserDTO> FindUserByEmail(string email)
+        {
+            if (String.IsNullOrEmpty(email))
+                throw new ValidationException("Не установлен login пользователя!", "Email");
+
+            var user = await Database.UserManager.FindByNameAsync(email);
+
+            if (user == null)
+                throw new ValidationException("Пользователь не найден!", "");
+
+            Mapper.Initialize(cfg => cfg.CreateMap<AppUser, AppUserDTO>());
+            return Mapper.Map<AppUser, AppUserDTO>(user);
+        }
+
+        public async Task<OperationDetails> ChangePassword(int id, string oldPass, string newPass)
+        {
+            var result = await Database.UserManager.ChangePasswordAsync(id, oldPass, newPass);
+
+            if (!result.Succeeded)
+                return new OperationDetails(false, result.Errors.FirstOrDefault(), "");
+
+            return new OperationDetails(true, "Пароль изменен успешно!", "");
         }
 
         public async Task<OperationDetails> Delete(int? id)
