@@ -38,11 +38,11 @@
                 |
                 @Html.ActionLink("Редактировать", "Edit", new { id = item.Id })
                 |
-                @Html.ActionLink("Удалить", "Delete", new {id = item.Id})
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
             </td>
         </tr>
     }
 </table>
 
 
-@Html.ActionLink("Создать новый отдел", "Create", "Department", new { @class = "btn btn-primary btn-sm" })
+@Html.ActionLink("Создать новый отдел", "Create", new { controller = "Department" }, new { @class = "btn btn-primary btn-sm" })
