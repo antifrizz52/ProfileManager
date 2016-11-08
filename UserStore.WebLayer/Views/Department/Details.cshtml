@@ -30,10 +30,10 @@ else
     <table class="table table-hover table-condensed table-bordered table-striped">
         <tr>
             <th class="text-center">
-                №
+                @Html.ActionLink("№", "Details", new { sortOrder = ViewBag.IdSortParam })
             </th>
             <th class="text-center">
-                Имя
+                @Html.ActionLink("Имя", "Details", new { sortOrder = ViewBag.NameSortParam })
             </th>
             <th class="text-center">
                 Email
@@ -42,7 +42,7 @@ else
                 Телефон
             </th>
             <th class="text-center">
-                Адрес
+                @Html.ActionLink("Адрес", "Details", new { sortOrder = ViewBag.AddressSortParam })
             </th>
         </tr>
 
@@ -67,9 +67,9 @@ else
             </tr>
         }
     </table>
-    <hr/>
+    <hr />
     <div>
-        @Html.ActionLink("Назад к списку", "Index", "Department", new { @class = "btn btn-primary btn-sm" })
+        @Html.ActionLink("Назад к списку", "Index", new { controller = "Department" }, new { @class = "btn btn-primary btn-sm" })
         @Html.ActionLink("Редактировать", "Edit", "Department", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm" })
     </div>
 }

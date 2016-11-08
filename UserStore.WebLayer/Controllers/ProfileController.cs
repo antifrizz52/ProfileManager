@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using AutoMapper;
@@ -6,6 +8,7 @@ using UserStore.BusinessLayer.DTO;
 using UserStore.BusinessLayer.Infrastructure;
 using UserStore.BusinessLayer.Interfaces;
 using UserStore.WebLayer.Models;
+using PagedList;
 
 namespace UserStore.WebLayer.Controllers
 {
@@ -23,7 +26,7 @@ namespace UserStore.WebLayer.Controllers
             authService = authServ;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             var profilesDto = userService.GetUsers();
 
@@ -52,7 +55,53 @@ namespace UserStore.WebLayer.Controllers
                 model.Add(detailedModel);
             }
 
-            return View(model);
+            IOrderedEnumerable<DetailedUserProfileModel> sortModel;
+
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.IdSortParam = sortOrder == "Id_Asc" ? "Id_Desc" : "Id_Asc";
+            ViewBag.DepartmentSortParam = sortOrder == "Department_Asc" ? "Department_Desc" : "Department_Asc";
+            ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(s => s.UserProfile.Name.Contains(searchString)).ToList();
+            }
+
+            switch (sortOrder)
+            {
+                case "Id_Desc":
+                    sortModel = model.OrderByDescending(s => s.UserProfile.Id);
+                    break;
+                case "Id_Asc":
+                    sortModel = model.OrderBy(s => s.UserProfile.Id);
+                    break;
+                case "Department_Desc":
+                    sortModel = model.OrderByDescending(s => s.Department.Name);
+                    break;
+                case "Department_Asc":
+                    sortModel = model.OrderBy(s => s.Department.Name);
+                    break;
+                case "Name_Desc":
+                    sortModel = model.OrderByDescending(s => s.UserProfile.Name);
+                    break;
+                default:
+                    sortModel = model.OrderBy(s => s.UserProfile.Name);
+                    break;
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            return View(sortModel.ToPagedList(pageNumber, pageSize));
         }
 
         public ActionResult Details(int? id)

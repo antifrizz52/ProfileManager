@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using AutoMapper;
@@ -19,7 +21,7 @@ namespace UserStore.WebLayer.Controllers
             departmentService = service;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
             var depDTO = departmentService.GetDepartments();
 
@@ -34,7 +36,35 @@ namespace UserStore.WebLayer.Controllers
                 department.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(usersDto);
             }
 
-            return View(departments);
+            IOrderedEnumerable<DepartmentModel> orderedDepartments;
+
+            ViewBag.IdSortParam = sortOrder == "Id_Asc" ? "Id_Desc" : "Id_Asc";
+            ViewBag.StuffCountSortParam = sortOrder == "StuffCount_Asc" ? "StuffCount_Desc" : "StuffCount_Asc";
+            ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+
+            switch (sortOrder)
+            {
+                case "Id_Desc":
+                    orderedDepartments = departments.OrderByDescending(s => s.Id);
+                    break;
+                case "Id_Asc":
+                    orderedDepartments = departments.OrderBy(s => s.Id);
+                    break;
+                case "StuffCount_Desc":
+                    orderedDepartments = departments.OrderByDescending(s => s.Users.Count);
+                    break;
+                case "StuffCount_Asc":
+                    orderedDepartments = departments.OrderBy(s => s.Users.Count);
+                    break;
+                case "Name_Desc":
+                    orderedDepartments = departments.OrderByDescending(s => s.Name);
+                    break;
+                default:
+                    orderedDepartments = departments.OrderBy(s => s.Name);
+                    break;
+            }
+            
+            return View(orderedDepartments);
         }
 
         public ActionResult Create()
@@ -42,7 +72,7 @@ namespace UserStore.WebLayer.Controllers
             return View();
         }
 
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, string sortOrder)
         {
             var department = departmentService.GetDepartment(id);
             var users = departmentService.GetAssociatedUsers(id);
@@ -55,6 +85,36 @@ namespace UserStore.WebLayer.Controllers
 
             var model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
             model.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(users);
+
+            IOrderedEnumerable<UserProfileModel> orderedUsers;
+
+            ViewBag.IdSortParam = sortOrder == "Id_Asc" ? "Id_Desc" : "Id_Asc";
+            ViewBag.AddressSortParam = sortOrder == "Address_Asc" ? "Address_Desc" : "Address_Asc";
+            ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+
+            switch (sortOrder)
+            {
+                case "Id_Desc":
+                    orderedUsers = model.Users.OrderByDescending(s => s.Id);
+                    break;
+                case "Id_Asc":
+                    orderedUsers = model.Users.OrderBy(s => s.Id);
+                    break;
+                case "Address_Desc":
+                    orderedUsers = model.Users.OrderByDescending(s => s.Address);
+                    break;
+                case "Address_Asc":
+                    orderedUsers = model.Users.OrderBy(s => s.Address);
+                    break;
+                case "Name_Desc":
+                    orderedUsers = model.Users.OrderByDescending(s => s.Name);
+                    break;
+                default:
+                    orderedUsers = model.Users.OrderBy(s => s.Name);
+                    break;
+            }
+
+            model.Users = orderedUsers.ToList();
 
             return View(model);
         }

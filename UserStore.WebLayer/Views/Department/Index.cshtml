@@ -8,13 +8,13 @@
 <table class="table table-hover table-condensed table-bordered table-striped">
     <tr>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Id)
+            @Html.ActionLink("№", "Index", new { sortOrder = ViewBag.IdSortParam })
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.ActionLink("Имя", "Index", new { sortOrder = ViewBag.NameSortParam })
         </th>
         <th class="text-center">
-            Количество сотрудников
+            @Html.ActionLink("Количество сотрудников", "Index", new { sortOrder = ViewBag.StuffCountSortParam })
         </th>
         <th class="text-center">
             Действия
@@ -38,11 +38,11 @@
                 |
                 @Html.ActionLink("Редактировать", "Edit", new { id = item.Id })
                 |
-                @Html.ActionLink("Удалить", "Delete", new {id = item.Id})
+                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
             </td>
         </tr>
     }
 </table>
 
 
-@Html.ActionLink("Создать новый отдел", "Create", "Department", new { @class = "btn btn-primary btn-sm" })
+@Html.ActionLink("Создать новый отдел", "Create", new { controller = "Department" }, new { @class = "btn btn-primary btn-sm" })

@@ -20,9 +20,9 @@
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
         </div>
-        <hr/>
+        <hr />
         <div>
-            @Html.ActionLink("Назад к списку", "Index", "Department", new { @class = "btn btn-primary btn-sm" })
+            @Html.ActionLink("Назад к списку", "Index", new { controller = "Department" }, new { @class = "btn btn-primary btn-sm" })
             <input type="submit" value="Сохранить" class="btn btn-primary btn-sm" />
         </div>
 
