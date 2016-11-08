@@ -10,10 +10,10 @@
 <table class="table table-hover table-condensed table-bordered table-striped">
     <tr>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.UserProfile.Id)
+            @Html.ActionLink("№", "Index", new { sortOrder = ViewBag.IdSortParam })
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.UserProfile.Name)
+            @Html.ActionLink("Имя", "Index", new { sortOrder = ViewBag.NameSortParam })
         </th>
         <th class="text-center">
             @Html.DisplayNameFor(model => model.UserProfile.Email)
@@ -22,7 +22,7 @@
             @Html.DisplayNameFor(model => model.UserProfile.Phone)
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.Department.Name)
+            @Html.ActionLink("Наименование отдела", "Index", new { sortOrder = ViewBag.DepartmentSortParam })
         </th>
         <th class="text-center">
             Действия

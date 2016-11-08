@@ -72,9 +72,9 @@
                 </div>
             </div>
         </div>
-        <hr/>
+        <hr />
         <div>
-            @Html.ActionLink("Назад к списку", "Index", "Profile", new { @class = "btn btn-primary btn-sm" })
+            @Html.ActionLink("Назад к списку", "Index", new { controller = "Profile" }, new { @class = "btn btn-primary btn-sm" })
             <input type="submit" value="Сохранить" class="btn btn-primary btn-sm" />
         </div>
     </div>

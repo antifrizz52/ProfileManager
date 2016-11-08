@@ -29,7 +29,7 @@
         @Html.DisplayFor(model => model.UserProfile.Phone) <br />
 
         <strong>@Html.LabelFor(model => model.UserProfile.Address)</strong>
-        @Html.DisplayFor(model => model.UserProfile.Address) <br/>
+        @Html.DisplayFor(model => model.UserProfile.Address) <br />
 
     </div>
 </div>
@@ -37,6 +37,6 @@
 <hr />
 
 <div>
-    @Html.ActionLink("Назад к списку", "Index", "Profile", new { @class = "btn btn-primary btn-sm" })
+    @Html.ActionLink("Назад к списку", "Index", new { controller = "Profile" }, new { @class = "btn btn-primary btn-sm" })
     @Html.ActionLink("Редактировать", "Edit", "Profile", new { id = Model.UserProfile.Id }, new { @class = "btn btn-primary btn-sm" })
 </div>

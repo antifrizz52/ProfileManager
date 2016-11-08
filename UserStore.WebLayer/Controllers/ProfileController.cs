@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using AutoMapper;
@@ -23,7 +25,7 @@ namespace UserStore.WebLayer.Controllers
             authService = authServ;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
             var profilesDto = userService.GetUsers();
 
@@ -52,7 +54,35 @@ namespace UserStore.WebLayer.Controllers
                 model.Add(detailedModel);
             }
 
-            return View(model);
+            IOrderedEnumerable<DetailedUserProfileModel> sortModel;
+
+            ViewBag.IdSortParam = sortOrder == "Id_Asc" ? "Id_Desc" : "Id_Asc";
+            ViewBag.DepartmentSortParam = sortOrder == "Department_Asc" ? "Department_Desc" : "Department_Asc";
+            ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+
+            switch (sortOrder)
+            {
+                case "Id_Desc":
+                    sortModel = model.OrderByDescending(s => s.UserProfile.Id);
+                    break;
+                case "Id_Asc":
+                    sortModel = model.OrderBy(s => s.UserProfile.Id);
+                    break;
+                case "Department_Desc":
+                    sortModel = model.OrderByDescending(s => s.Department.Name);
+                    break;
+                case "Department_Asc":
+                    sortModel = model.OrderBy(s => s.Department.Name);
+                    break;
+                case "Name_Desc":
+                    sortModel = model.OrderByDescending(s => s.UserProfile.Name);
+                    break;
+                default:
+                    sortModel = model.OrderBy(s => s.UserProfile.Name);
+                    break;
+            }
+            
+            return View(sortModel);
         }
 
         public ActionResult Details(int? id)
