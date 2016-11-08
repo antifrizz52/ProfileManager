@@ -8,6 +8,7 @@ using UserStore.BusinessLayer.DTO;
 using UserStore.BusinessLayer.Infrastructure;
 using UserStore.BusinessLayer.Interfaces;
 using UserStore.WebLayer.Models;
+using PagedList;
 
 namespace UserStore.WebLayer.Controllers
 {
@@ -25,7 +26,7 @@ namespace UserStore.WebLayer.Controllers
             authService = authServ;
         }
 
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             var profilesDto = userService.GetUsers();
 
@@ -56,10 +57,19 @@ namespace UserStore.WebLayer.Controllers
 
             IOrderedEnumerable<DetailedUserProfileModel> sortModel;
 
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.IdSortParam = sortOrder == "Id_Asc" ? "Id_Desc" : "Id_Asc";
             ViewBag.DepartmentSortParam = sortOrder == "Department_Asc" ? "Department_Desc" : "Department_Asc";
             ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
 
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -87,8 +97,11 @@ namespace UserStore.WebLayer.Controllers
                     sortModel = model.OrderBy(s => s.UserProfile.Name);
                     break;
             }
-            
-            return View(sortModel);
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            return View(sortModel.ToPagedList(pageNumber, pageSize));
         }
 
         public ActionResult Details(int? id)

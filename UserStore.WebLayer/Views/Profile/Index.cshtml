@@ -1,4 +1,6 @@
-﻿@model IEnumerable<UserStore.WebLayer.Models.DetailedUserProfileModel>
+﻿@model PagedList.IPagedList<UserStore.WebLayer.Models.DetailedUserProfileModel>
+@using PagedList.Mvc;
+@using UserStore.BusinessLayer.Services
 
 @{
     ViewBag.Title = "Пользователи";
@@ -8,11 +10,11 @@
 
 <hr />
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "Profile", FormMethod.Get))
 {
     <div class="input-group col-sm-3">
         <div class="input-group input-group-sm">
-            @Html.TextBox("searchString", "", new { @class = "form-control", placeholder = "Введите имя..." })
+            @Html.TextBox("searchString", ViewBag.CurrentFilter as string, new { @class = "form-control", placeholder = "Введите имя..." })
             <div class="input-group-btn">
                 <button type="submit" class="btn btn-info">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -27,16 +29,16 @@
 <table class="table table-hover table-condensed table-bordered table-striped">
     <tr>
         <th class="text-center">
-            @Html.ActionLink("№", "Index", new { sortOrder = ViewBag.IdSortParam })
+            @Html.ActionLink("№", "Index", new { sortOrder = ViewBag.IdSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th class="text-center">
-            @Html.ActionLink("Имя", "Index", new { sortOrder = ViewBag.NameSortParam })
+            @Html.ActionLink("Имя", "Index", new { sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.UserProfile.Email)
+            Email
         </th>
         <th class="text-center">
-            @Html.DisplayNameFor(model => model.UserProfile.Phone)
+            Телефон
         </th>
         <th class="text-center">
             @Html.ActionLink("Наименование отдела", "Index", new { sortOrder = ViewBag.DepartmentSortParam })
@@ -74,5 +76,9 @@
         </tr>
     }
 </table>
+
+@Html.PagedListPager(Model, page => Url.Action("Index", 
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }), 
+    new PagedListRenderOptions { UlElementClasses = new List<string> { "pagination", "pagination-sm" } })
 
 @Html.ActionLink("Добавить нового пользователя", "Create", new { controller = "Profile" }, new { @class = "btn btn-primary btn-sm" })
