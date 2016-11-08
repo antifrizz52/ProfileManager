@@ -25,7 +25,7 @@ namespace UserStore.WebLayer.Controllers
             authService = authServ;
         }
 
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
             var profilesDto = userService.GetUsers();
 
@@ -59,6 +59,12 @@ namespace UserStore.WebLayer.Controllers
             ViewBag.IdSortParam = sortOrder == "Id_Asc" ? "Id_Desc" : "Id_Asc";
             ViewBag.DepartmentSortParam = sortOrder == "Department_Asc" ? "Department_Desc" : "Department_Asc";
             ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(s => s.UserProfile.Name.Contains(searchString)).ToList();
+            }
 
             switch (sortOrder)
             {

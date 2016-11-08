@@ -7,6 +7,23 @@
 <h3>Пользователи</h3>
 
 <hr />
+
+@using (Html.BeginForm())
+{
+    <div class="input-group col-sm-3">
+        <div class="input-group input-group-sm">
+            @Html.TextBox("searchString", "", new { @class = "form-control", placeholder = "Введите имя..." })
+            <div class="input-group-btn">
+                <button type="submit" class="btn btn-info">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<br />
+
 <table class="table table-hover table-condensed table-bordered table-striped">
     <tr>
         <th class="text-center">
