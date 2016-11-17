@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Optimization;
+using UserStore.BusinessLayer.Util;
 using UserStore.WebLayer.Util;
 
 namespace UserStore.WebLayer
@@ -17,6 +18,7 @@ namespace UserStore.WebLayer
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            Logger.InitLogger();
         }
     }
 }
