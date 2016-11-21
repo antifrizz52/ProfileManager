@@ -7,6 +7,7 @@ using AutoMapper;
 using UserStore.BusinessLayer.DTO;
 using UserStore.BusinessLayer.Infrastructure;
 using UserStore.BusinessLayer.Interfaces;
+using UserStore.BusinessLayer.Util;
 using UserStore.WebLayer.Models;
 
 namespace UserStore.WebLayer.Controllers
@@ -23,17 +24,34 @@ namespace UserStore.WebLayer.Controllers
 
         public ActionResult Index(string sortOrder)
         {
-            var depDTO = departmentService.GetDepartments();
+            List<DepartmentModel> departments;
 
-            Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
-            var departments = Mapper.Map<IEnumerable<DepartmentDTO>, List<DepartmentModel>>(depDTO);
-
-            foreach (var department in departments)
+            try
             {
-                var usersDto = departmentService.GetAssociatedUsers(department.Id);
+                var depsDTO = departmentService.GetDepartments();
 
-                Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfileModel>());
-                department.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(usersDto);
+                if (!depsDTO.Any()) return View();
+
+                Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
+                departments = Mapper.Map<IEnumerable<DepartmentDTO>, List<DepartmentModel>>(depsDTO);
+
+                foreach (var department in departments)
+                {
+                    var usersDto = departmentService.GetAssociatedUsers(department.Id);
+
+                    Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfileModel>());
+                    department.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(usersDto);
+                }
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Запрос списка отделов: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Запрос списка отделов: ошибка", ex);
+                throw;
             }
 
             IOrderedEnumerable<DepartmentModel> orderedDepartments;
@@ -63,7 +81,7 @@ namespace UserStore.WebLayer.Controllers
                     orderedDepartments = departments.OrderBy(s => s.Name);
                     break;
             }
-            
+
             return View(orderedDepartments);
         }
 
@@ -74,17 +92,34 @@ namespace UserStore.WebLayer.Controllers
 
         public ActionResult Details(int? id, string sortOrder)
         {
-            var department = departmentService.GetDepartment(id);
-            var users = departmentService.GetAssociatedUsers(id);
+            DepartmentModel model;
 
-            Mapper.Initialize(cfg =>
+            try
             {
-                cfg.CreateMap<DepartmentDTO, DepartmentModel>();
-                cfg.CreateMap<UserDTO, UserProfileModel>();
-            });
+                var department = departmentService.GetDepartment(id);
+                var users = departmentService.GetAssociatedUsers(id);
 
-            var model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
-            model.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(users);
+                Mapper.Initialize(cfg =>
+                {
+                    cfg.CreateMap<DepartmentDTO, DepartmentModel>();
+                    cfg.CreateMap<UserDTO, UserProfileModel>();
+                });
+
+                model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
+                model.Users = Mapper.Map<IEnumerable<UserDTO>, List<UserProfileModel>>(users);
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Запрос информации по отделу: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Warn("Запрос информации по отделу: ошибка", ex);
+                throw;
+            }
+
+            if (model.Users == null) return View(model);
 
             IOrderedEnumerable<UserProfileModel> orderedUsers;
 
@@ -121,20 +156,50 @@ namespace UserStore.WebLayer.Controllers
 
         public ActionResult Edit(int? id)
         {
-            var department = departmentService.GetDepartment(id);
+            DepartmentModel model;
 
-            Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
-            var model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
+            try
+            {
+                var department = departmentService.GetDepartment(id);
+
+                Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
+                model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Редактирование отдела: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Warn("Редактирование отдела: ошибка", ex);
+                throw;
+            }
 
             return View(model);
         }
 
         public ActionResult Delete(int? id)
         {
-            var department = departmentService.GetDepartment(id);
+            DepartmentModel model;
 
-            Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
-            var model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
+            try
+            {
+                var department = departmentService.GetDepartment(id);
+
+                Mapper.Initialize(cfg => cfg.CreateMap<DepartmentDTO, DepartmentModel>());
+                model = Mapper.Map<DepartmentDTO, DepartmentModel>(department);
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Удаление отдела: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Warn("Удаление отдела: ошибка", ex);
+                throw;
+            }
 
             return View(model);
         }
@@ -148,14 +213,22 @@ namespace UserStore.WebLayer.Controllers
             Mapper.Initialize(cfg => cfg.CreateMap<DepartmentModel, DepartmentDTO>());
             var department = Mapper.Map<DepartmentModel, DepartmentDTO>(model);
 
-            OperationDetails operationDetails = await departmentService.Update(department);
+            OperationDetails operationDetails;
+
+            try
+            {
+                operationDetails = await departmentService.Update(department);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Редактирование отдела: ошибка", ex);
+                throw;
+            }
 
             if (operationDetails.Succeeded)
                 return RedirectToAction("Index");
 
-            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
-
-            return View();
+            throw new ValidationException(operationDetails.Message, "");
         }
 
         [HttpPost]
@@ -167,30 +240,46 @@ namespace UserStore.WebLayer.Controllers
             Mapper.Initialize(cfg => cfg.CreateMap<DepartmentModel, DepartmentDTO>());
             var department = Mapper.Map<DepartmentModel, DepartmentDTO>(model);
 
-            OperationDetails operationDetails = await departmentService.Create(department);
+            OperationDetails operationDetails;
+
+            try
+            {
+                operationDetails = await departmentService.Create(department);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Создание отдела: ошибка", ex);
+                throw;
+            }
 
             if (operationDetails.Succeeded)
             {
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
-
-            return View(model);
+            throw new ValidationException(operationDetails.Message, "");
         }
 
         [HttpPost]
         [ActionName("Delete")]
         public async Task<ActionResult> ConfirmedDelete(DepartmentModel model)
         {
-            OperationDetails operationDetails = await departmentService.Delete(model.Id);
+            OperationDetails operationDetails;
 
-            if(operationDetails.Succeeded)
+            try
+            {
+                operationDetails = await departmentService.Delete(model.Id);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Удаление отдела: ошибка", ex);
+                throw;
+            }
+
+            if (operationDetails.Succeeded)
                 return RedirectToAction("Index");
 
-            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
-
-            return View(model);
+            throw new ValidationException(operationDetails.Message, "");
         }
     }
 }

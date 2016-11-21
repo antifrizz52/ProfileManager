@@ -5,44 +5,51 @@
 
 <h3>Отделы</h3>
 <hr />
-<table class="table table-hover table-condensed table-bordered table-striped">
-    <tr>
-        <th class="text-center">
-            @Html.ActionLink("№", "Index", new { sortOrder = ViewBag.IdSortParam })
-        </th>
-        <th class="text-center">
-            @Html.ActionLink("Имя", "Index", new { sortOrder = ViewBag.NameSortParam })
-        </th>
-        <th class="text-center">
-            @Html.ActionLink("Количество сотрудников", "Index", new { sortOrder = ViewBag.StuffCountSortParam })
-        </th>
-        <th class="text-center">
-            Действия
-        </th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+@if (Model ==  null)
+{
+    <div class="text-center">Нет данных</div>
+}
+else
+{
+    <table class="table table-hover table-condensed table-bordered table-striped">
         <tr>
-            <td class="text-center">
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td class="text-right">
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td class="text-center">
-                @Html.DisplayFor(modelItem => item.Users.Count)
-            </td>
-            <td class="text-center">
-                @Html.ActionLink("Детали", "Details", new { id = item.Id })
-                |
-                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id })
-                |
-                @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
-            </td>
+            <th class="text-center">
+                @Html.ActionLink("№", "Index", new { sortOrder = ViewBag.IdSortParam })
+            </th>
+            <th class="text-center">
+                @Html.ActionLink("Имя", "Index", new { sortOrder = ViewBag.NameSortParam })
+            </th>
+            <th class="text-center">
+                @Html.ActionLink("Количество сотрудников", "Index", new { sortOrder = ViewBag.StuffCountSortParam })
+            </th>
+            <th class="text-center">
+                Действия
+            </th>
         </tr>
-    }
-</table>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td class="text-right">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Users.Count)
+                </td>
+                <td class="text-center">
+                    @Html.ActionLink("Детали", "Details", new { id = item.Id })
+                    |
+                    @Html.ActionLink("Редактировать", "Edit", new { id = item.Id })
+                    |
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </table>
+}
 
 
 @Html.ActionLink("Создать новый отдел", "Create", new { controller = "Department" }, new { @class = "btn btn-primary btn-sm" })
