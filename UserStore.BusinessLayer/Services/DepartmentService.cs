@@ -50,6 +50,8 @@ namespace UserStore.BusinessLayer.Services
         {
             if (id == null)
             {
+                Logger.Log.Warn("Запрос информации по отделу: id отдела не установлен");
+
                 throw new ValidationException("Не установлен id отдела!", "Id");
             }
 
