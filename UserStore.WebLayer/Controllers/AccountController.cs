@@ -1,11 +1,14 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using Microsoft.Owin.Security;
 using UserStore.BusinessLayer.DTO;
+using UserStore.BusinessLayer.Infrastructure;
 using UserStore.BusinessLayer.Interfaces;
+using UserStore.BusinessLayer.Util;
 using UserStore.WebLayer.Models;
 
 namespace UserStore.WebLayer.Controllers
@@ -89,41 +92,82 @@ namespace UserStore.WebLayer.Controllers
             var appUserDto = Mapper.Map<RegisterModel, AppUserDTO>(model);
             var userDto = Mapper.Map<RegisterModel, UserDTO>(model);
 
-            var operationDetails = await authService.Create(appUserDto);
+            OperationDetails operationDetails;
+
+            try
+            {
+                operationDetails = await authService.Create(appUserDto);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Регистрация аккаунта: ошибка", ex);
+                throw;
+            }
+
+            if (!operationDetails.Succeeded)
+                throw new ValidationException(operationDetails.Message, operationDetails.Property);
+
+            try
+            {
+                operationDetails = await userService.CreateProfile(userDto);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Создание профиля пользователя: ошибка", ex);
+            }
 
             if (operationDetails.Succeeded)
             {
-                operationDetails = await userService.CreateProfile(userDto);
-
-                if (operationDetails.Succeeded)
-                {
-                    return View("SuccessRegister");
-                }
-                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+                return View("SuccessRegister");
             }
-            else
-                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
 
-            return View(model);
+            throw new ValidationException(operationDetails.Message, operationDetails.Property);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(PasswordModel model)
         {
+            AppUserDTO appUser;
+
             if (!ModelState.IsValid) return View(model);
 
-            var appUser = await authService.FindUserByEmail(User.Identity.Name);
+            try
+            {
+                appUser = await authService.FindUserByEmail(User.Identity.Name);
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Изменение пароля пользователя: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Warn("Изменение пароля пользователя: ошибка", ex);
+                throw;
+            }
 
-            var operationDetails =
-                await authService.ChangePassword(appUser.Id, model.CurrentPassword, model.NewPassword);
+            OperationDetails operationDetails;
+
+            try
+            {
+                operationDetails =await authService.ChangePassword(appUser.Id, model.CurrentPassword, model.NewPassword);
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Изменение пароля пользователя: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Warn("Изменение пароля пользователя: ошибка", ex);
+                throw;
+            }
 
             if (operationDetails.Succeeded)
                 return View("SuccessPassChange");
 
-            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
-
-            return View(model);
+            throw new ValidationException(operationDetails.Message, operationDetails.Property);
         }
 
         public ActionResult Logout()
