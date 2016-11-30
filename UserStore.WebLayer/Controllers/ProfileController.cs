@@ -9,6 +9,7 @@ using UserStore.BusinessLayer.Infrastructure;
 using UserStore.BusinessLayer.Interfaces;
 using UserStore.WebLayer.Models;
 using PagedList;
+using UserStore.BusinessLayer.Util;
 
 namespace UserStore.WebLayer.Controllers
 {
@@ -28,31 +29,44 @@ namespace UserStore.WebLayer.Controllers
 
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            var profilesDto = userService.GetUsers();
-
             var model = new List<DetailedUserProfileModel>();
 
-            foreach (var userDto in profilesDto)
+            try
             {
-                var detailedModel = new DetailedUserProfileModel();
+                var profilesDto = userService.GetUsers();
 
-                var departmentDto = userDto.DepartmentId == null
-                    ? null
-                    : departmentService.GetDepartment(userDto.DepartmentId);
-
-                Mapper.Initialize(cfg =>
+                foreach (var userDto in profilesDto)
                 {
-                    cfg.CreateMap<UserDTO, UserProfileModel>();
-                    cfg.CreateMap<DepartmentDTO, DepartmentModel>();
-                });
+                    var detailedModel = new DetailedUserProfileModel();
 
-                detailedModel.UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto);
+                    var departmentDto = userDto.DepartmentId == null
+                        ? null
+                        : departmentService.GetDepartment(userDto.DepartmentId);
 
-                detailedModel.Department = userDto.DepartmentId == null
-                    ? null
-                    : Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto);
+                    Mapper.Initialize(cfg =>
+                    {
+                        cfg.CreateMap<UserDTO, UserProfileModel>();
+                        cfg.CreateMap<DepartmentDTO, DepartmentModel>();
+                    });
 
-                model.Add(detailedModel);
+                    detailedModel.UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto);
+
+                    detailedModel.Department = userDto.DepartmentId == null
+                        ? null
+                        : Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto);
+
+                    model.Add(detailedModel);
+                }
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Запрос списка пользователей: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Запрос списка пользователей: ошибка", ex);
+                throw;
             }
 
             IOrderedEnumerable<DetailedUserProfileModel> sortModel;
@@ -106,69 +120,108 @@ namespace UserStore.WebLayer.Controllers
 
         public ActionResult Details(int? id)
         {
-            var departmentDto = new DepartmentDTO();
-
-            var userDto = userService.GetUser(id);
-
-            if (userDto.DepartmentId != null)
+            try
             {
-                departmentDto = departmentService.GetDepartment(userDto.DepartmentId);
+                var departmentDto = new DepartmentDTO();
+
+                var userDto = userService.GetUser(id);
+
+                if (userDto.DepartmentId != null)
+                {
+                    departmentDto = departmentService.GetDepartment(userDto.DepartmentId);
+                }
+
+                Mapper.Initialize(cfg =>
+                {
+                    cfg.CreateMap<UserDTO, UserProfileModel>();
+                    cfg.CreateMap<DepartmentDTO, DepartmentModel>();
+                });
+
+                var detailedInfo = new DetailedUserProfileModel()
+                {
+                    UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto),
+                    Department = Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto)
+                };
+
+                return View(detailedInfo);
             }
-
-            Mapper.Initialize(cfg =>
+            catch (ValidationException ex)
             {
-                cfg.CreateMap<UserDTO, UserProfileModel>();
-                cfg.CreateMap<DepartmentDTO, DepartmentModel>();
-            });
-
-            var detailedInfo = new DetailedUserProfileModel()
+                Logger.Log.Warn("Запрос профиля пользователя: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
             {
-                UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto),
-                Department = Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto)
-            };
-
-            return View(detailedInfo);
+                Logger.Log.Error("Запрос профиля пользователя: ошибка", ex);
+                throw;
+            }
         }
 
         public ActionResult Edit(int? id)
         {
-            var departmentDto = new DepartmentDTO();
-
-            var userDto = userService.GetUser(id);
-
-            if (userDto.DepartmentId != null)
+            try
             {
-                departmentDto = departmentService.GetDepartment(userDto.DepartmentId);
+                var departmentDto = new DepartmentDTO();
+
+                var userDto = userService.GetUser(id);
+
+                if (userDto.DepartmentId != null)
+                {
+                    departmentDto = departmentService.GetDepartment(userDto.DepartmentId);
+                }
+
+                Mapper.Initialize(cfg =>
+                {
+                    cfg.CreateMap<UserDTO, UserProfileModel>();
+                    cfg.CreateMap<DepartmentDTO, DepartmentModel>();
+                });
+
+                var model = new DetailedUserProfileModel()
+                {
+                    UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto),
+                    Department = Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto)
+                };
+
+                var departments = GetDepartmentsList();
+
+                ViewBag.Departments = departments;
+
+                return View(model);
             }
-
-            Mapper.Initialize(cfg =>
+            catch (ValidationException ex)
             {
-                cfg.CreateMap<UserDTO, UserProfileModel>();
-                cfg.CreateMap<DepartmentDTO, DepartmentModel>();
-            });
-
-            var model = new DetailedUserProfileModel()
+                Logger.Log.Warn("Редактирование профиля пользователя: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
             {
-                UserProfile = Mapper.Map<UserDTO, UserProfileModel>(userDto),
-                Department = Mapper.Map<DepartmentDTO, DepartmentModel>(departmentDto)
-            };
-
-            var departments = GetDepartmentsList();
-
-            ViewBag.Departments = departments;
-
-            return View(model);
+                Logger.Log.Error("Редактирование профиля пользователя: ошибка", ex);
+                throw;
+            }
         }
 
         public ActionResult Delete(int? id)
         {
-            var userDto = userService.GetUser(id);
+            try
+            {
+                var userDto = userService.GetUser(id);
 
-            Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfileModel>());
+                Mapper.Initialize(cfg => cfg.CreateMap<UserDTO, UserProfileModel>());
 
-            var model = Mapper.Map<UserDTO, UserProfileModel>(userDto);
+                var model = Mapper.Map<UserDTO, UserProfileModel>(userDto);
 
-            return View(model);
+                return View(model);
+            }
+            catch (ValidationException ex)
+            {
+                Logger.Log.Warn("Удаление профиля пользователя: предупреждение", ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Удаление профиля пользователя: ошибка", ex);
+                throw;
+            }
         }
 
         [HttpPost]
@@ -183,14 +236,22 @@ namespace UserStore.WebLayer.Controllers
             Mapper.Initialize(cfg => cfg.CreateMap<UserProfileModel, UserDTO>());
             var userDto = Mapper.Map<UserProfileModel, UserDTO>(model.UserProfile);
 
-            OperationDetails operationDetails = await userService.Update(userDto);
+            OperationDetails operationDetails;
+
+            try
+            {
+                operationDetails = await userService.Update(userDto);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Редактирование профиля пользователя: ошибка", ex);
+                throw;
+            }
 
             if (operationDetails.Succeeded)
                 return RedirectToAction("Index");
 
-            ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
-
-            return View(model);
+            throw new ValidationException(operationDetails.Message, "");
         }
 
         public ActionResult Create()
@@ -222,46 +283,69 @@ namespace UserStore.WebLayer.Controllers
             var appUser = Mapper.Map<UserProfileModel, AppUserDTO>(model);
             var userDto = Mapper.Map<UserProfileModel, UserDTO>(model);
 
-            OperationDetails operationDetails = await authService.Create(appUser);
+            OperationDetails operationDetails;
 
-            if (operationDetails.Succeeded)
+            try
+            {
+                operationDetails = await authService.Create(appUser);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Создание аккаунта пользователя: ошибка", ex);
+                throw;
+            }
+
+            if (!operationDetails.Succeeded)
+                throw new ValidationException(operationDetails.Message, "");
+
+            try
             {
                 operationDetails = await userService.CreateProfile(userDto);
-
-                if (operationDetails.Succeeded)
-                    return RedirectToAction("Index");
-
-                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
             }
-            else
+            catch (Exception ex)
             {
-                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+                Logger.Log.Error("Создание профиля пользователя: ошибка", ex);
             }
 
-            return View(model);
+            if (operationDetails.Succeeded)
+                return RedirectToAction("Index");
+
+            throw new ValidationException(operationDetails.Message, "");
         }
 
         [HttpPost]
         [ActionName("Delete")]
         public async Task<ActionResult> ConfirmedDelete(UserProfileModel model)
         {
-            OperationDetails operationDetails = await userService.Delete(model.Id);
+            OperationDetails operationDetails;
 
-            if (operationDetails.Succeeded)
+            try
+            {
+                operationDetails = await userService.Delete(model.Id);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Удаление профиля пользователя: ошибка", ex);
+                throw;
+            }
+
+            if (!operationDetails.Succeeded)
+                throw new ValidationException(operationDetails.Message, "");
+
+            try
             {
                 operationDetails = await authService.Delete(model.Id);
-
-                if (operationDetails.Succeeded)
-                    return RedirectToAction("Index");
-
-                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
             }
-            else
+            catch (Exception ex)
             {
-                ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
+                Logger.Log.Error("Удаление аккаунта: ошибка", ex);
+                throw;
             }
 
-            return View(model);
+            if (operationDetails.Succeeded)
+                return RedirectToAction("Index");
+
+            throw new ValidationException(operationDetails.Message, "");
         }
 
         public List<SelectListItem> GetDepartmentsList()

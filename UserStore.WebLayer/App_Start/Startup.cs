@@ -6,6 +6,7 @@ using Owin;
 using Microsoft.Owin.Security.Cookies;
 
 [assembly: OwinStartup(typeof(UserStore.WebLayer.App_Start.Startup))]
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace UserStore.WebLayer.App_Start
 {
